@@ -1,0 +1,74 @@
+// Aepp Store
+// This contract keeps track of all the Aepps that are registered and upvotes for these Aepps.
+// Upvotes require payment, payments follow revenue share model with creators %99 to Aepp Builders and %1 platform fee.
+// ACF grant: https://forum.aeternity.com/t/active-aepp-store-fast-easy-aepp-discovery/9494
+
+contract AeppStore =
+    record state = {
+        index: int,
+        aeppdb: map(int, aepp),
+        deployer: address
+      } 
+
+    record aepp = {
+            id: int,
+            name: string,
+            description: string,
+            owner: address, 
+            link: string,
+            upvote: int,
+            upVoters: list(address)
+        }
+
+    stateful entrypoint init() = {
+        index = 1,
+        aeppdb = {},
+        deployer = Call.caller
+      }
+
+    stateful entrypoint createAepp(name: string, description: string, owner: address, link: string) =
+        let new_aepp : aepp = {
+            id = state.index,
+            name = name,
+            description = description,
+            owner = Call.caller,
+            link = link,
+            upvote = 0,
+            upVoters = []}
+                
+        put(state{aeppdb[state.index] = new_aepp})
+        put(state{index = (state.index + 1)})
+        state.index        
+
+    payable stateful entrypoint upvoteAepp(id: int) =
+        require(aeppExists(id), "Aepp does not exist")    
+        require(0 =< Call.value, "upvote call.value needs to be at least 1")
+        // increment aepp upvote total
+        put(state{aeppdb[id].upvote = state.aeppdb[id].upvote + Call.value})
+        // add upvoter to aepp
+        put(state{aeppdb[id].upVoters = (Call.caller :: state.aeppdb[id].upVoters)})
+
+        // forward 99% of paid funds to aepp creator - %1 is kept as platform fee for payments > 100 aetto
+        if(Call.value > 99)
+            Chain.spend(state.aeppdb[id].owner, (Call.value/100)*99)  
+        else
+            Chain.spend(state.aeppdb[id].owner, Call.value)        
+
+    entrypoint aeppExists(id: int) : bool =
+        Map.member(id, state.aeppdb)
+
+    // Check Aepp Upvotes
+    stateful entrypoint checkAeppUpvote(id: int): int =
+      state.aeppdb[id].upvote
+    
+    // Check the total balance available in contract
+    stateful entrypoint checkContractBalance(): int =
+      Contract.balance
+    
+    stateful entrypoint getAeppCount(): int =
+      state.index
+
+    // Withdraw leftovers
+    stateful entrypoint withdrawAll() =
+      if(Call.caller == state.deployer)
+        Chain.spend(Call.caller, Contract.balance)
