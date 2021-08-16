@@ -134,7 +134,7 @@
           </v-list-item-title>
         </v-list-item-content>
 
-      <v-btn :href="aepp.link" target="_blank">
+      <v-btn :href="aepp.link" target="_blank" class="mr-5">
         Visit Aepp
       </v-btn>
 
@@ -179,11 +179,14 @@
   justify-content: end;
 }
 .nearavatar {
-  flex: initial;
+  flex: auto;
   margin-left: 5px;
 }
 .mr-5 {
   margin-right: 5px;
+}
+.v-image__image--cover{
+  background-size: contain;
 }
 </style>
 
