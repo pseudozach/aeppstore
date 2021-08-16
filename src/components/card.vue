@@ -105,11 +105,13 @@
       >
         mdi-apps
       </v-icon>
-      <span class="text-h6 font-weight-light">Aepp Name</span>
+      <!-- Aepp Name -->
+      <span class="text-h6 font-weight-light">{{aepp.name}}</span>
     </v-card-title>
 
-    <v-card-text class="text-h3 font-weight-bold">
-      "Description of the aepp along with features and services offered."
+    <!-- "Description of the aepp along with features and services offered." -->
+    <v-card-text class="text-h3 font-weight-bold" style="fontSize: 1.25rem;">
+      {{aepp.description}}
     </v-card-text>
 
     <v-card-actions>
@@ -118,32 +120,44 @@
           <v-img
             class="elevation-6"
             alt=""
-            src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light"
+            src="ae.png"
+            style="backgroundSize: contain;"
           ></v-img>
+            <!-- src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light" -->
+          <!-- <AAvataaar identifier="aepp.key"></AAvataaar> -->
         </v-list-item-avatar>
 
         <v-list-item-content class="nearavatar">
-          <v-list-item-title>AE address of Aepp Creator</v-list-item-title>
+          <!-- AE address of Aepp Creator -->
+          <v-list-item-title style="textAlign: left;">
+            {{aepp.shortaddress}}
+          </v-list-item-title>
         </v-list-item-content>
+
+      <v-btn :href="aepp.link" target="_blank">
+        Visit Aepp
+      </v-btn>
 
         <v-row
           align="center"
           justify="end"
           class="rightend"
         >
-          <v-btn icon @click="">
+          <v-btn icon @click="upvote">
             <v-icon class="mr-1">
               mdi-chevron-triple-up
             </v-icon>
           </v-btn>          
-          <span class="subheading mr-5">256</span>
+          <span class="subheading mr-5">
+            {{aepp.upvote}}
+          </span>
           <!-- <span class="mr-1">  ·  </span> -->
-          <v-btn icon @click="">
+<!--           <v-btn icon @click="">
             <v-icon>
               mdi-launch
             </v-icon>
           </v-btn> 
-          <span class="subheading">45</span>
+          <span class="subheading">{{aepp.click}}</span> -->
         </v-row>
       </v-list-item>
     </v-card-actions>
@@ -212,31 +226,35 @@ Vue.use(SkeletonCards)
 import { EventBus } from '../eventbus';
 const BigNum = require('bn.js');
 
-// Get a RTDB instance
-import firebase from 'firebase/app'
-import 'firebase/database'
+// import AAvataaar from 'a-avataaar';
+// Vue.use(AAvataaar)
 
-var firebaseConfig = {
-  apiKey: process.env.VUE_APP_fb_apikey,
-  authDomain: process.env.VUE_APP_fb_authdomain,
-  databaseURL: process.env.VUE_APP_fb_dburl,
-  projectId: process.env.VUE_APP_fb_projectid,
-  storageBucket: process.env.VUE_APP_fb_storagebucket,
-  messagingSenderId: process.env.VUE_APP_fb_msgsenderid,
-  appId: process.env.VUE_APP_fb_appid,
-  measurementId: process.env.VUE_APP_fb_measurementid
-};
-  if (!firebase.apps.length) {
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-  }
+// // Get a RTDB instance
+// import firebase from 'firebase/app'
+// import 'firebase/database'
 
-const db = firebase
-  // .initializeApp({ databaseURL: 'https://MY-DATABASE.firebaseio.com' })
-  .database()
+// var firebaseConfig = {
+//   apiKey: process.env.VUE_APP_fb_apikey,
+//   authDomain: process.env.VUE_APP_fb_authdomain,
+//   databaseURL: process.env.VUE_APP_fb_dburl,
+//   projectId: process.env.VUE_APP_fb_projectid,
+//   storageBucket: process.env.VUE_APP_fb_storagebucket,
+//   messagingSenderId: process.env.VUE_APP_fb_msgsenderid,
+//   appId: process.env.VUE_APP_fb_appid,
+//   measurementId: process.env.VUE_APP_fb_measurementid
+// };
+//   if (!firebase.apps.length) {
+//     // Initialize Firebase
+//     firebase.initializeApp(firebaseConfig);
+//   }
+
+// const db = firebase
+//   // .initializeApp({ databaseURL: 'https://MY-DATABASE.firebaseio.com' })
+//   .database()
 
 export default {
   name: 'my-component',
+  props:["aepp"],
    mounted: function () {
     let thisthing = this
     EventBus.$on('joinmarketdone', function(data){
@@ -340,6 +358,42 @@ export default {
     //     "vgt_id": 0,
     //     "originalIndex": 0
     // }
+    async upvote(){
+      let thisthing = this
+      console.log("upvoting: ", this.aepp);
+
+      // // validate
+      // if(marketobj.question == "" || marketobj.paypervote == "" || marketobj.oracle.trim() == "" || this.fatype == "nothing"){
+      //   // using options
+      //   this.$notify({
+      //     title: 'Empty Fields',
+      //     text: 'Failed to fetch market data, refresh and try again.',
+      //     type: 'error',
+      //     duration: 10000,
+      //   });
+      //   return;
+      // }
+      // // thisthing.statustext = "Creating Market...";
+      // thisthing.isLoadingJoin = true;
+        
+      // // (joinMarket (marketId int) (side bool) (amount uint))
+      // // let sideobj = trueCV();
+      // let newyescount = marketobj.yescount;
+      // let newnocount = marketobj.nocount;
+      // let uservote = "false";
+      // if(thisthing.fatype == "down"){
+      //   // sideobj = falseCV();
+      //   uservote = "false";
+      //   newnocount++;
+      // } else {
+      //   newyescount++;
+      //   uservote = "true";
+      // }
+
+      // var passobj = {args: [marketobj.marketId+"", uservote], paypervote: marketobj.paypervote, marketobj: marketobj};
+      // EventBus.$emit('joinmarket', passobj);
+
+      },
     async joinMarket(marketobj){
       let thisthing = this
       // validate
@@ -433,34 +487,34 @@ export default {
       EventBus.$emit('exitmarket', passobj);
 
       },
-    fetchData() {
-      db.ref(this.dbref).on("value", snapshot => {
-        if(snapshot.exists()){
-          let data = snapshot.val();
-          let messages = [];
-          Object.keys(data).forEach(key => {
-            // console.log("each data[key]: ", data[key]);
-            var msgtopush = {merchant: key, ...data[key]};
-            // console.log("msgtopush: ", msgtopush);
-            messages.push(msgtopush);
-            // messages.push({
-            //   merchant: key,
-            //   lolli: data[key].lolli,
-            //   fold: data[key].fold,
-            //   strike: data[key].strike,
-            //   updatedAt: ''
-            // });
-          });
-          this.rows = messages;          
-        }
+    // fetchData() {
+    //   db.ref(this.dbref).on("value", snapshot => {
+    //     if(snapshot.exists()){
+    //       let data = snapshot.val();
+    //       let messages = [];
+    //       Object.keys(data).forEach(key => {
+    //         // console.log("each data[key]: ", data[key]);
+    //         var msgtopush = {merchant: key, ...data[key]};
+    //         // console.log("msgtopush: ", msgtopush);
+    //         messages.push(msgtopush);
+    //         // messages.push({
+    //         //   merchant: key,
+    //         //   lolli: data[key].lolli,
+    //         //   fold: data[key].fold,
+    //         //   strike: data[key].strike,
+    //         //   updatedAt: ''
+    //         // });
+    //       });
+    //       this.rows = messages;          
+    //     }
 
-      });    
-    },
+    //   });    
+    // },
   },
   created() {
     // let viewMessage = this;
     // const itemsRef = fire.database().ref("cbtable");
-    this.fetchData()
+    // this.fetchData()
   },
   data(){
     // console.log("data return this.rows: ", this.rows);
@@ -472,9 +526,11 @@ export default {
       fatype: 'nothing',
       userData: null,
       show: false,
+      // aepp: null,
       // dbref: 'aepredict',
-      dbref: 'aepredict_mainnet',
-      contractname: 'aepredict',    
+      // dbref: 'aepredict_mainnet',
+      dbref: 'aeppstore_testnet',
+      contractname: 'aeppstore',    
       items: [
         { message: 'Foo' },
         { message: 'Bar' }

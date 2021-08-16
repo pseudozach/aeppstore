@@ -20,9 +20,9 @@
         Open Modal!
       </button>   -->   
 
-    <div style="display: inline;">
+<!--     <div style="display: inline;">
 
-      <!-- <SigninButton /> -->
+      <SigninButton />
 
       <VueLoadingButton
         aria-label="Create"
@@ -32,7 +32,7 @@
         :styled="true"
       >Create</VueLoadingButton>
 
-    </div>
+    </div> -->
 
     <!-- <Aesignin @CustomEventInputChanged="doSomenthing"/> -->
 
@@ -48,7 +48,24 @@
       <Form2 />
     </modal> -->
     <!-- <Table/> -->
-    <Card/>
+
+    <div > Card Holder
+      <Card v-for="aepp in aepps" :key="aepp.key" v-bind:aepp="aepp"/>
+      <!-- <div v-for="aepp in aepps" :key="aepp.key" :aepp="aepp.key"></div> -->
+    </div>
+
+    <v-btn
+      id="addbutton"
+      class="mx-2"
+      fab
+      large
+      color="purple"
+      @click="showModal"
+    >
+      <v-icon>
+        mdi-plus
+      </v-icon>
+    </v-btn>
 
     <notifications position="bottom right"/>
   </div>
@@ -67,13 +84,36 @@
   // import SigninButton from './components/signin.vue';
   // import Aesignin from './components/aesignin.vue';
 
-  import Vue from 'vue'
-  Vue.component("modal", {
-    template: "#modal-template"
-  });
+// Get a RTDB instance
+import firebase from 'firebase/app'
+import 'firebase/database'
 
-  import Notifications from 'vue-notification'
-  Vue.use(Notifications)
+var firebaseConfig = {
+  apiKey: process.env.VUE_APP_fb_apikey,
+  authDomain: process.env.VUE_APP_fb_authdomain,
+  databaseURL: process.env.VUE_APP_fb_dburl,
+  projectId: process.env.VUE_APP_fb_projectid,
+  storageBucket: process.env.VUE_APP_fb_storagebucket,
+  messagingSenderId: process.env.VUE_APP_fb_msgsenderid,
+  appId: process.env.VUE_APP_fb_appid,
+  measurementId: process.env.VUE_APP_fb_measurementid
+};
+  if (!firebase.apps.length) {
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  }
+
+const db = firebase
+  // .initializeApp({ databaseURL: 'https://MY-DATABASE.firebaseio.com' })
+  .database()
+
+import Vue from 'vue'
+Vue.component("modal", {
+  template: "#modal-template"
+});
+
+import Notifications from 'vue-notification'
+Vue.use(Notifications)
 
 export default {
   name: 'app',
@@ -93,7 +133,10 @@ export default {
     return {
       isModalVisible: false,
       aeclient: null,
-      aepubkey: 'nothing'
+      aepubkey: 'nothing',
+      dbref: 'aeppstore_testnet',
+      contractname: 'aeppstore',
+      aepps: null,    
     };
   },
   methods: {
@@ -103,12 +146,45 @@ export default {
     closeModal() {
       this.isModalVisible = false;
     },
+    fetchData() {
+      db.ref(this.dbref).on("value", snapshot => {
+        if(snapshot.exists()){
+          let data = snapshot.val();
+          let messages = [];
+          Object.keys(data).forEach(key => {
+            console.log("each data[key]: ", data[key]);
+            var shortaddress = data[key]["owner"].substr(0,8) + "..." + data[key]["owner"].substr(-5);
+            // 
+            var msgtopush = {key: key, shortaddress:shortaddress, ...data[key]};
+
+            console.log("msgtopush: ", msgtopush);
+            messages.push(msgtopush);
+            // messages.push({
+            //   merchant: key,
+            //   lolli: data[key].lolli,
+            //   fold: data[key].fold,
+            //   strike: data[key].strike,
+            //   updatedAt: ''
+            // });
+          });
+          this.aepps = messages;     
+          console.log("pushed all this.aepps", this.aepps);     
+        }
+
+      });    
+    },
+  },
+  created() {
+    // let viewMessage = this;
+    // const itemsRef = fire.database().ref("cbtable");
+    this.fetchData()
+  },
     // doSomenthing ( data ) {
     //   console.log("app.vue got aepubkey: ", data);
     //   this.aepubkey = data;
     // }
-  }
 }
+
 </script>
 
 <style>
@@ -119,5 +195,11 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 0px;
+}
+#addbutton {
+  float: right;
+  margin-right: 20px;
+  background-color: #FF2D55;
+  color: white;
 }
 </style>

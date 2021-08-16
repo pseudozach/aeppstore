@@ -18,6 +18,25 @@
         <v-icon>mdi-plus</v-icon>  
       </v-btn> -->
 
+<!--       <v-btn
+        :loading="addingApp"
+        :disabled="!connectedWallet"
+        v-show="connectedWallet"
+        style="marginRight: 5px;"
+        color="blue-grey"
+        class="ma-2 white--text"
+        @click="addaeppclicked"
+      >
+        Add Aepp
+        <v-icon
+          right
+          dark
+        >
+          mdi-plus
+        </v-icon>
+      </v-btn> -->
+
+
       <v-btn
         :loading="connectingWallet"
         :disabled="connectedWallet"
@@ -33,6 +52,8 @@
           mdi-wallet
         </v-icon>
       </v-btn>
+
+
 
 
 
@@ -97,7 +118,12 @@
       async plusclicked () {
         this.connectingWallet = true;
         EventBus.$emit('scanforwallets', ["\"manual\""]);
-      },    
+      },  
+      // async addaeppclicked () {
+      //   console.log("pop up modal to enter app data")
+      //   // this.connectingWallet = true;
+      //   // EventBus.$emit('scanforwallets', ["\"manual\""]);
+      // },    
       doSomenthing ( data ) {
         console.log("app.vue got aepubkey: ", data);
         this.connectingWallet = false;

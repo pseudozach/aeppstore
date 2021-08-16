@@ -4,7 +4,7 @@
       <div class="modal">
         <header class="modal-header">
           <slot name="header">
-            Create a prediction market
+            Add New Aepp
           </slot>
           <button
             type="button"
@@ -17,7 +17,7 @@
 
         <section class="modal-body">
           <slot name="body">
-            Make a prediction, choose who resolves (automatic or manual oracle) and create market.
+            Add your Aepp info and address so users can find and support you!
           </slot>
           <Form2 @exit="closeModal"/>
          </section>

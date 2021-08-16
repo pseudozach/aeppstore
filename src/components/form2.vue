@@ -3,16 +3,49 @@
 		<!-- form wrapper -->
 		<fvl-form method="post" :data="form" url="/create">
 		  <!-- Text input component -->
-		  
+
+		  	<!-- createAepp(name: string, description: string, owner: address, link: string) -->
+		
 			<fvl-input 
-				:value.sync="form.question" 
-				label="Question (Answer must be YES or NO)" 
-				name="question" 
+				:value.sync="form.name" 
+				label="Aepp Name" 
+				name="name" 
 				style="margin: 10px;" 
-				placeholder="e.g. BTC/USD price will be over $60k"
+				placeholder="e.g. Aeye Prediction Market"
 				required
 				type="text"
 			/>
+
+			<fvl-input 
+				:value.sync="form.description" 
+				label="Aepp Description" 
+				name="description" 
+				style="margin: 10px;" 
+				placeholder="e.g. Create prediction markets, make predictions and earn AE."
+				required
+				type="text"
+			/>
+
+			<fvl-input 
+				:value.sync="form.owner" 
+				label="Aepp Owner Address" 
+				name="owner" 
+				style="margin: 10px;" 
+				placeholder="e.g. ak_2j4xffP6dd1dmDH6wNdfcznic5hEPr6NBifUVC5M4iZ6nvetnq"
+				required
+				type="text"
+			/>
+
+			<fvl-input 
+				:value.sync="form.link" 
+				label="Aepp URL" 
+				name="link" 
+				style="margin: 10px;" 
+				placeholder="e.g. https://aeye.vercel.app"
+				required
+				type="text"
+			/>
+
 		  <!-- Textarea component -->
 		  <!-- <fvl-textarea :value.sync="form.bio" label="Bio" name="bio" /> -->
 
@@ -22,7 +55,7 @@
 		  <!-- oracles disabled temporarily -->
 		   <!-- 'ok_2NRBaMsgSDjZRFw4dU82KCqLa5W7aQdbJAzaFprTpjEGLAzroV': 'AE / EUR',  -->
 		   
-			<fvl-select
+<!-- 			<fvl-select
 			  label="Select Oracle"
 			  name="oracle"
 			  placeholder="--- Available Automatic Oracles ---"
@@ -37,15 +70,15 @@
 				name="manual oracle address" 
 				placeholder="e.g. ak_P3fcnnJo5fnJCGQZntkNHCKv9sKTu2ABDNVYShVmPtf1KnipR"
 				style="margin: 10px;"
-			/>
+			/> -->
 			<!-- Gujarat / ceylon / hunan / Iowa -->
 
-			<VueCtkDateTimePicker 
+<!-- 			<VueCtkDateTimePicker 
 				v-model="datetime" 
 				style="margin: 15px; width: auto;" 
 				label="Market Resolve Date & Time"
 				:min-date="mindatetime"
-			/>
+			/> -->
 
 
 			<!-- <div id="statusholder" style="margin: 10px;" v-if="statustext != ''">{{statustext}}</div> -->
@@ -81,13 +114,13 @@
             Get Precipitation Data from Oracle
       	</button> -->
       	
-	      	<fvl-input :value.sync="form.paypervote" 
+<!-- 	      	<fvl-input :value.sync="form.paypervote" 
 	      		label="Payment per vote (aetto)" 
 	      		name="paypervote" 
 	      		style="margin: 10px;"
 	      		type="number"
 	      		required
-	      	/>
+	      	/> -->
 
 <!--     	<button
             type="button"
@@ -99,12 +132,12 @@
 
 
 		  	<VueLoadingButton 
-		        aria-label="Create Market"
+		        aria-label="Create Aepp"
 		        class="button"
-		        @click.native="createMarket"
+		        @click.native="createAepp"
 		        :loading="isLoading"
 		        :styled="true"
-		  	>Create Market
+		  	>Create Aepp
 		  	</VueLoadingButton>
 
 		</fvl-form>
@@ -200,10 +233,11 @@ export default {
 		    isLoadingContract: false,
 		    userData: null,
 		    marketcount: 0,
-		    contractname: 'aepredict',
+		    contractname: 'aeppstore',
 		    // dbref: 'aepredict', //testnet
-		    dbref: 'aepredict_mainnet',
-		    contractaddress: 'ct_fc3546zDYjvJzgkFKQCAErcShuRYPHLFwgW1o3RVd2wXS47nT',
+		    // dbref: 'aepredict_mainnet',
+		    dbref: 'aeppstore_testnet',
+		    contractaddress: 'ct_fc3546zDYjvJzgkFKQCAErcShuRYPHLFwgW1o3RVd2wXS47nT', // not used
 		    client: null,
 		    explorer_testnet: "https://explorer.testnet.aeternity.io/transactions/",
 		    explorer_mainnet: "https://explorer.aeternity.io/transactions/",
@@ -263,6 +297,29 @@ export default {
 
 			thisthing.$emit('exit', true);
 		});		
+
+		EventBus.$on('createaeppdone', function(data){
+			// { result: 4, account: "ak_P3fcnnJo5fnJCGQZntkNHCKv9sKTu2ABDNVYShVmPtf1KnipR", txid: {…} }
+			// console.log("createmarketdone: ", data);
+			thisthing.isLoading = false;
+
+			// console.log("adding to number of markets: ",  thisthing.marketcount);
+			const explorerTransactionUrl = thisthing.explorer_mainnet+data.txid.hash;
+			var fbobj = {aeppId: data.result-1, account: data.account, name: thisthing.form.name, description: thisthing.form.description, owner: thisthing.form.owner, txid: explorerTransactionUrl, link: thisthing.form.link, upvote: 0, balance:0, createdAt: firebase.database.ServerValue.TIMESTAMP};
+			console.log("fbobj ", fbobj);
+
+		  	db.ref(thisthing.dbref).push(fbobj);
+
+			this.$notify({
+			  title: 'Create Aepp',
+			  text: 'Tx broadcasted. Aepp created: ' + explorerTransactionUrl,
+			  type: 'success',
+			  duration: 10000,
+			});
+
+			thisthing.$emit('exit', true);
+		});		
+
     },
     // created: function () {
 
@@ -271,15 +328,15 @@ export default {
     	async setupthings () {
     		let contractaddress = this.contractaddress
     		//testnet
-    		// const NODE_URL = 'https://testnet.aeternity.io/';
-    		const NODE_URL = 'https://mainnet.aeternity.io/';
+    		const NODE_URL = 'https://testnet.aeternity.io/';
+    		// const NODE_URL = 'https://mainnet.aeternity.io/';
     		const NODE_INTERNAL_URL = 'http://127.0.0.1:3113'
-			const COMPILER_URL = 'https://compiler.aepps.com'
+			const COMPILER_URL = 'https://latest.compiler.aepps.com'
     		const node = await Node({ url: NODE_URL, internalUrl: NODE_INTERNAL_URL })
 			const SDKInstance = await Ae({
 			  nodes: [
-			    // { name: 'testNet', instance: node },
-			    { name: 'mainNet', instance: node },
+			    { name: 'testNet', instance: node },
+			    // { name: 'mainNet', instance: node },
 			  ],
 			  compilerUrl: 'COMPILER_URL',
 			  accounts: [acc],
@@ -315,6 +372,31 @@ export default {
 		// 	  )
 		// 	})())
 		// },
+    	async createAepp(){
+			let thisthing = this
+    		// validate
+    		console.log("thisthing.form: ", thisthing.form, thisthing.client)
+    		if(thisthing.form.name == "" || thisthing.form.description == "" || thisthing.form.owner == "" || thisthing.form.link == "" || thisthing.client == null){
+    			// using options
+				this.$notify({
+				  title: 'Empty Fields',
+				  text: 'Please fill out all required information.',
+				  type: 'error',
+				  duration: 10000,
+				});
+				return;
+    		}
+    		// console.log("this.datetime: ", this.datetime);
+    		// let unixtime = new Date(this.datetime).getTime()/1000;
+    		// console.log("unixtime: ", unixtime);
+    		// var momenttime = moment(this.datetime, 'YYYY-MM-DD hh:mm a');
+    		// // console.log("momenttime: ", momenttime, momenttime.unix());
+    		// let unixtime = momenttime.unix();
+    		// thisthing.unixtime = unixtime;
+    		// thisthing.statustext = "Creating Market...";
+    		thisthing.isLoading = true;
+    		EventBus.$emit('createaepp', ["\""+thisthing.form.name+"\"", "\""+thisthing.form.description+"\"", thisthing.form.owner, "\""+thisthing.form.link+"\""]);
+    	},
     	async createMarket(){
 			let thisthing = this
     		// validate
