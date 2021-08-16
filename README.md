@@ -5,7 +5,8 @@ Aepp Store is the ultimate location for all dapps built on Aeternity blockchain.
 * Builders can add their dapps to increase visibility and generate revenue.
 * Users can discover new dapps and vote for their creators with Ae.
 
-Currently under heavy development.
+Currently under heavy development.  
+preview available at: https://aeppstore.vercel.app
 
 ### Build and Run:
 1. Compile and deploy contracts at /contracts folder.
