@@ -134,15 +134,15 @@
           </v-list-item-title>
         </v-list-item-content>
 
-      <v-btn :href="aepp.link" target="_blank" class="mr-5">
+      <v-btn :href="aepp.link" target="_blank" class="mr-5" style="">
         Visit Aepp
       </v-btn>
 
-        <v-row
+<!--         <v-row
           align="center"
           justify="end"
           class="rightend"
-        >
+        > -->
           <v-btn icon @click="upvote">
             <v-icon class="mr-1">
               mdi-chevron-triple-up
@@ -158,7 +158,7 @@
             </v-icon>
           </v-btn> 
           <span class="subheading">{{aepp.click}}</span> -->
-        </v-row>
+        <!-- </v-row> -->
       </v-list-item>
     </v-card-actions>
   </v-card>
@@ -229,6 +229,28 @@ Vue.use(SkeletonCards)
 import { EventBus } from '../eventbus';
 const BigNum = require('bn.js');
 
+import firebase from 'firebase/app'
+import 'firebase/database'
+
+var firebaseConfig = {
+  apiKey: process.env.VUE_APP_fb_apikey,
+  authDomain: process.env.VUE_APP_fb_authdomain,
+  databaseURL: process.env.VUE_APP_fb_dburl,
+  projectId: process.env.VUE_APP_fb_projectid,
+  storageBucket: process.env.VUE_APP_fb_storagebucket,
+  messagingSenderId: process.env.VUE_APP_fb_msgsenderid,
+  appId: process.env.VUE_APP_fb_appid,
+  measurementId: process.env.VUE_APP_fb_measurementid
+};
+if (!firebase.apps.length) {
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+}
+
+const db = firebase
+  // .initializeApp({ databaseURL: 'https://MY-DATABASE.firebaseio.com' })
+  .database()
+
 // import AAvataaar from 'a-avataaar';
 // Vue.use(AAvataaar)
 
@@ -260,6 +282,36 @@ export default {
   props:["aepp"],
    mounted: function () {
     let thisthing = this
+    EventBus.$on('upvoteaeppdone', function(data){
+      // { result: 4, account: "ak_P3fcnnJo5fnJCGQZntkNHCKv9sKTu2ABDNVYShVmPtf1KnipR", txid: {…} }
+      console.log("upvoteaeppdone: ", data);
+      thisthing.isLoading = false;
+
+      // console.log("adding to number of markets: ",  thisthing.marketcount);
+      const explorerTransactionUrl = thisthing.explorer_testnet+data.txid.hash;
+      
+      // var fbobj = {marketId: data.result-1, account: data.account, question: thisthing.form.question, paypervote: thisthing.form.paypervote, oracle: thisthing.form.oracle.trim(), txid: explorerTransactionUrl, resolveTime: thisthing.datetime, unixtime: thisthing.unixtime, resolveType:"manual", yescount: 0, nocount: 0, balance:0, resolved: false, result: false,  createdAt: firebase.database.ServerValue.TIMESTAMP};
+      // console.log("fbobj ", fbobj);
+      // db.ref(thisthing.dbref).push(fbobj);
+
+      data.aepp.upvote = parseInt(data.aepp.upvote) + 100
+      data.aepp.balance = parseInt(data.aepp.balance) + 99
+      data.aepp.updatedAt = firebase.database.ServerValue.TIMESTAMP
+      console.log("updating to ", data.aepp);
+      db.ref(thisthing.dbref + "/" + data.aepp.key).set(data.aepp);
+
+      // not needed
+      // thisthing.aepp.upvote = thisthing.aepp.upvote + 100;
+
+      this.$notify({
+        title: 'Upvoted Aepp',
+        text: 'Tx broadcasted. Upvote completed: ' + explorerTransactionUrl,
+        type: 'success',
+        duration: 10000,
+      });
+
+      // thisthing.$emit('exit', true);
+    });   
     EventBus.$on('joinmarketdone', function(data){
       // { result: 4, account: "ak_P3fcnnJo5fnJCGQZntkNHCKv9sKTu2ABDNVYShVmPtf1KnipR", txid: {…} }
       // {result: decoded, account: thisthing.onAccount, txid: result, marketobj: passobj.marketobj, args: passobj.args}
@@ -364,6 +416,7 @@ export default {
     async upvote(){
       let thisthing = this
       console.log("upvoting: ", this.aepp);
+      EventBus.$emit('upvoteaepp', this.aepp);
 
       // // validate
       // if(marketobj.question == "" || marketobj.paypervote == "" || marketobj.oracle.trim() == "" || this.fatype == "nothing"){
@@ -396,7 +449,7 @@ export default {
       // var passobj = {args: [marketobj.marketId+"", uservote], paypervote: marketobj.paypervote, marketobj: marketobj};
       // EventBus.$emit('joinmarket', passobj);
 
-      },
+    },
     async joinMarket(marketobj){
       let thisthing = this
       // validate
@@ -534,6 +587,8 @@ export default {
       // dbref: 'aepredict_mainnet',
       dbref: 'aeppstore_testnet',
       contractname: 'aeppstore',    
+      explorer_testnet: "https://explorer.testnet.aeternity.io/transactions/",
+      explorer_mainnet: "https://explorer.aeternity.io/transactions/",
       items: [
         { message: 'Foo' },
         { message: 'Bar' }

@@ -61,6 +61,7 @@
       large
       color="purple"
       @click="showModal"
+      :disabled="!walletconnected"
     >
       <v-icon>
         mdi-plus
@@ -72,6 +73,7 @@
 </template>
 
 <script>
+  import { EventBus } from './eventbus';
   // import HelloWorld from './components/HelloWorld.vue'
   import Table from './components/table.vue'
   import Card from './components/card.vue'
@@ -137,6 +139,7 @@ export default {
       dbref: 'aeppstore_testnet',
       contractname: 'aeppstore',
       aepps: null,    
+      walletconnected: false,
     };
   },
   methods: {
@@ -152,12 +155,12 @@ export default {
           let data = snapshot.val();
           let messages = [];
           Object.keys(data).forEach(key => {
-            console.log("each data[key]: ", data[key]);
+            // console.log("each data[key]: ", data[key]);
             var shortaddress = data[key]["owner"].substr(0,8) + "..." + data[key]["owner"].substr(-5);
             // 
             var msgtopush = {key: key, shortaddress:shortaddress, ...data[key]};
 
-            console.log("msgtopush: ", msgtopush);
+            // console.log("msgtopush: ", msgtopush);
             messages.push(msgtopush);
             // messages.push({
             //   merchant: key,
@@ -168,7 +171,7 @@ export default {
             // });
           });
           this.aepps = messages;     
-          console.log("pushed all this.aepps", this.aepps);     
+          // console.log("pushed all this.aepps", this.aepps);     
         }
 
       });    
@@ -178,6 +181,12 @@ export default {
     // let viewMessage = this;
     // const itemsRef = fire.database().ref("cbtable");
     this.fetchData()
+  },
+  mounted: function () {
+    let thisthing = this 
+    EventBus.$on('walletconnected', function(data){
+      thisthing.walletconnected = true;
+    });
   },
     // doSomenthing ( data ) {
     //   console.log("app.vue got aepubkey: ", data);

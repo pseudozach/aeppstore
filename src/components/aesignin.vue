@@ -338,8 +338,9 @@
         // console.log("callResult: ",callResult);
 
       },
-      async upvoteAepp (passobj) {
-        var optionsobj = {amount: passobj.paypervote};
+      async upvoteAepp (aepp) {
+        var optionsobj = {amount: "100"};
+        var passobj = {args: [aepp.aeppId+""]};
         console.log("upvoteAepp passobj: ", passobj, optionsobj);
 
         let thisthing = this
@@ -351,7 +352,7 @@
           var decoded = await result.decode('int');
           console.log("upvoteAeppresult, decoded: ", result, decoded)
 
-          EventBus.$emit('upvoteaeppdone', {result: decoded, account: thisthing.onAccount, txid: result, marketobj: passobj.marketobj, args: passobj.args});
+          EventBus.$emit('upvoteaeppdone', {result: decoded, account: thisthing.onAccount, txid: result, aepp: aepp, args: passobj.args});
 
           return Object.assign(
             result,

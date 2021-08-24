@@ -136,6 +136,7 @@
 		        class="button"
 		        @click.native="createAepp"
 		        :loading="isLoading"
+		        :disabled="!walletconnected"
 		        :styled="true"
 		  	>Create Aepp
 		  	</VueLoadingButton>
@@ -239,6 +240,7 @@ export default {
 		    dbref: 'aeppstore_testnet',
 		    contractaddress: 'ct_fc3546zDYjvJzgkFKQCAErcShuRYPHLFwgW1o3RVd2wXS47nT', // not used
 		    client: null,
+		    walletconnected:false,
 		    explorer_testnet: "https://explorer.testnet.aeternity.io/transactions/",
 		    explorer_mainnet: "https://explorer.aeternity.io/transactions/",
 		}
@@ -261,11 +263,12 @@ export default {
     	this.mindatetime = mindate;
 		
 		EventBus.$on('walletconnected', function(data){
-			// console.log("form2 client: ", data);
+			console.log("form2 client: ", data);
 			// console.log("this: ", this);
 			// console.log("this.$options: ", this.$options);
 			// console.log("contractname: 'aepredict ?= ", thisthing.contractname)
 			thisthing.client = data;
+			thisthing.walletconnected = true;
 			// this.$options.call();
 				// var address = 'ct_fc3546zDYjvJzgkFKQCAErcShuRYPHLFwgW1o3RVd2wXS47nT'
 				// var method = 'createMarket'
