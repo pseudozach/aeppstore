@@ -262,7 +262,7 @@
         : JSON.stringify(response.result, null, 4),
     },
     mounted: function () {
-      console.log("aesisgnin mounted");
+      // console.log("aesisgnin mounted");
       let thisthing = this
       EventBus.$on('createaepp', function(data){
         // [ "asd", "100", "ok_24Rhws9bUiTwrLN8YBUjuTXBMvtxGAgnkRUWZv92jsJsXEFr68", NaN, "manual" ]
@@ -474,7 +474,7 @@
       })
       this.height = await this.client.height()
       // Start looking for wallets
-      console.log("start scanning")
+      // console.log("start scanning")
       await this.scanForWallets()
     },
     async startScan(){

@@ -35,7 +35,7 @@
 
     </div> -->
 
-    <!-- <Aesignin @CustomEventInputChanged="doSomenthing"/> -->
+    <Aesignin/>
 
     <Modal
       v-show="isModalVisible"
@@ -57,7 +57,7 @@
 
     <v-btn
       id="addbutton text-blue"
-      class="mx-2"
+      class="mx-2 mb-2"
       fab
       large
       @click="showModal"
@@ -83,6 +83,9 @@
     /*color: #1161fe;*/
     color: rgba(17,97,254,var(--text-opacity)) !important;
   }
+  .mb-2 {
+    margin-bottom: 1rem;
+  }
 </style>
 
 <script>
@@ -97,7 +100,7 @@
   // import Form2 from './components/form2.vue'
   import VueLoadingButton from "vue-loading-button";
   // import SigninButton from './components/signin.vue';
-  // import Aesignin from './components/aesignin.vue';
+  import Aesignin from './components/aesignin.vue';
 
 // Get a RTDB instance
 import firebase from 'firebase/app'
@@ -141,7 +144,7 @@ export default {
     // Form2,
     Modal,
     VueLoadingButton,
-    // Aesignin,
+    Aesignin,
     // SigninButton
   },
   data() {
