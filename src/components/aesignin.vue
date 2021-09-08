@@ -262,7 +262,7 @@
         : JSON.stringify(response.result, null, 4),
     },
     mounted: function () {
-      // console.log("aesisgnin mounted");
+      console.log("aesisgnin mounted");
       let thisthing = this
       EventBus.$on('createaepp', function(data){
         // [ "asd", "100", "ok_24Rhws9bUiTwrLN8YBUjuTXBMvtxGAgnkRUWZv92jsJsXEFr68", NaN, "manual" ]
@@ -292,6 +292,7 @@
         // thisthing.startScan()
         thisthing.scanForWallets()
       });      
+      // this.scanForWallets();
     },
     methods: {
       async deployContract (data) {
@@ -427,6 +428,7 @@
         this.compilerVersionResponse = await errorAsField(this.client.getCompilerVersion())
       },
       async scanForWallets () {
+        // console.log("aesisgnin scanForWallets");
         const handleWallets = async function ({ wallets, newWallet }) {
           // console.log("handleWallets");
           newWallet = newWallet || Object.values(wallets)[0]
@@ -445,6 +447,7 @@
       }
     },
     async created () {
+      // console.log("aesisgnin created");
       // Open iframe with Wallet if run in top window
       // window !== window.parent || await this.getReverseWindow()
 
@@ -471,8 +474,8 @@
       })
       this.height = await this.client.height()
       // Start looking for wallets
-      // console.log("start scanning")
-      // await this.scanForWallets()
+      console.log("start scanning")
+      await this.scanForWallets()
     },
     async startScan(){
       await this.scanForWallets()

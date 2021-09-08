@@ -94,7 +94,7 @@
 
 <template>
   <v-card
-    class="mx-auto"
+    class="mx-auto bg-black-initial"
     color="gray"
     dark
   >
@@ -110,22 +110,22 @@
     </v-card-title>
 
     <!-- "Description of the aepp along with features and services offered." -->
-    <v-card-text class="text-h3 font-weight-bold" style="fontSize: 1.25rem;">
+    <v-card-text class="text-h3 font-weight-bold" style="fontSize: 1.25rem; color: white !important;">
       {{aepp.description}}
     </v-card-text>
 
     <v-card-actions>
       <v-list-item class="grow">
-        <v-list-item-avatar color="grey darken-3">
+<!--         <v-list-item-avatar color="grey darken-3">
           <v-img
             class="elevation-6"
             alt=""
             src="ae.png"
             style="backgroundSize: contain;"
-          ></v-img>
+          ></v-img> -->
             <!-- src="https://avataaars.io/?avatarStyle=Transparent&topType=ShortHairShortCurly&accessoriesType=Prescription02&hairColor=Black&facialHairType=Blank&clotheType=Hoodie&clotheColor=White&eyeType=Default&eyebrowType=DefaultNatural&mouthType=Default&skinColor=Light" -->
           <!-- <AAvataaar identifier="aepp.key"></AAvataaar> -->
-        </v-list-item-avatar>
+        <!-- </v-list-item-avatar> -->
 
         <v-list-item-content class="nearavatar">
           <!-- AE address of Aepp Creator -->
@@ -134,7 +134,7 @@
           </v-list-item-title>
         </v-list-item-content>
 
-      <v-btn :href="aepp.link" target="_blank" class="mr-5" style="">
+      <v-btn :href="aepp.link" target="_blank" class="mr-5">
         Visit Aepp
       </v-btn>
 
@@ -143,12 +143,12 @@
           justify="end"
           class="rightend"
         > -->
-          <v-btn icon @click="upvote">
+          <v-btn icon @click="upvote" class="text-blue">
             <v-icon class="mr-1">
               mdi-chevron-triple-up
             </v-icon>
           </v-btn>          
-          <span class="subheading mr-5">
+          <span class="subheading mr-5 text-blue">
             {{aepp.upvote}}
           </span>
           <!-- <span class="mr-1">  ·  </span> -->
@@ -187,6 +187,26 @@
 }
 .v-image__image--cover{
   background-size: contain;
+}
+.text-blue {
+    --text-opacity: 1;
+    /*color: #1161fe;*/
+    color: rgba(17,97,254,var(--text-opacity)) !important;
+}
+.text-gray-500 {
+    --text-opacity: 1;
+    color: #787878;
+    color: rgba(120,120,120,var(--text-opacity));
+} 
+.bg-black-200 {
+    --bg-opacity: 1;
+    /*background-color: #090909;*/
+    background-color: rgba(9,9,9,var(--bg-opacity)) !important;
+}
+.bg-black-initial {
+    --bg-opacity: 1;
+    /*background-color: #000;*/
+    background-color: rgba(0,0,0,var(--bg-opacity)) !important;
 }
 </style>
 

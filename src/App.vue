@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <Appbar/>
+    <!-- <Appbar/> -->
+
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
    <!--  <div>
       <img alt="logo" src="./assets/icon.png">
@@ -49,17 +50,16 @@
     </modal> -->
     <!-- <Table/> -->
 
-    <div > Card Holder
+    <div>
       <Card v-for="aepp in aepps" :key="aepp.key" v-bind:aepp="aepp"/>
       <!-- <div v-for="aepp in aepps" :key="aepp.key" :aepp="aepp.key"></div> -->
     </div>
 
     <v-btn
-      id="addbutton"
+      id="addbutton text-blue"
       class="mx-2"
       fab
       large
-      color="purple"
       @click="showModal"
       :disabled="!walletconnected"
     >
@@ -71,6 +71,19 @@
     <notifications position="bottom right"/>
   </div>
 </template>
+
+<style type="text/css">
+  body{
+/*    color: #787878;
+    background: black;*/
+    background-color: #0f0f0f;
+  }
+  .text-blue {
+    --text-opacity: 1;
+    /*color: #1161fe;*/
+    color: rgba(17,97,254,var(--text-opacity)) !important;
+  }
+</style>
 
 <script>
   import { EventBus } from './eventbus';
@@ -123,7 +136,7 @@ export default {
     // HelloWorld,
     // Table,
     Card,
-    Appbar,
+    // Appbar,
     // Form,
     // Form2,
     Modal,
@@ -203,6 +216,7 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  color: #787878;
   margin-top: 0px;
 }
 #addbutton {
