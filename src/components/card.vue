@@ -304,7 +304,17 @@ export default {
     let thisthing = this
     EventBus.$on('upvoteaeppdone', function(data){
       // { result: 4, account: "ak_P3fcnnJo5fnJCGQZntkNHCKv9sKTu2ABDNVYShVmPtf1KnipR", txid: {…} }
-      console.log("upvoteaeppdone: ", data);
+      
+      // console.log("confirming aepp data: ", data.aepp.aeppId, thisthing.aepp.aeppId);
+      // only increase upvote if appId is equal to this appId
+      if(data.aepp.aeppId != thisthing.aepp.aeppId){
+        return false;
+      }
+      //  else {
+      //   console.log("it's a match");
+      // }
+
+      console.log("upvoteaeppdone: ", data, thisthing);
       thisthing.isLoading = false;
 
       // console.log("adding to number of markets: ",  thisthing.marketcount);
